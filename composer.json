@@ -1,0 +1,27 @@
+{
+    "name": "nicoljamie/laravelCDN",
+    "description": "CDN Help for Laravel",
+    "authors": [
+        {
+            "name": "Jamie Nicol",
+            "email": "jamie.nicol@me.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "NicolJamie\\LaravelCDN\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "NicolJamie\\LaravelCDN\\LaravelCDNServiceProvider"
+            ],
+            "aliases": {
+                "Spaces": "NicolJamie\\LaravelCDN\\SpacesFacade"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}

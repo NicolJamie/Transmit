@@ -1,2 +1,2 @@
-# LaravelCDN
-CDN Helper for Laravel Simplified
+# Spaces
+PHP Wrapper for DigitalOceans Spaces
