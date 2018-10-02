@@ -15,7 +15,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "NicolJamie\\LaravelCDN\\SpacesServiceProvider"
+                "NicolJamie\\LaravelCDN\\LaravelCDNServiceProvider"
             ],
             "aliases": {
                 "Spaces": "NicolJamie\\LaravelCDN\\SpacesFacade"
