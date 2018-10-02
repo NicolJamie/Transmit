@@ -1,9 +1,8 @@
 <?php
 
 return [
-    'accessKey' => null,
-    'secretKey' => env('SPACE_SECRET'),
-    'space' => null,
-    'region' => null,
-    'host' => 'digitaloceanspaces.com'
+    'directories' => [
+        //.. directories to push
+    ],
+    'prefix' => '' //..uploading to a folder (staging, production)
 ];
