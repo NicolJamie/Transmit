@@ -1,6 +1,6 @@
 <?php
 
-namespace NicolJamie\Spaces;
+namespace NicolJamie\LaravelCDN;
 
 use Illuminate\Support\ServiceProvider;
 
