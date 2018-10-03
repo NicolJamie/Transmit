@@ -1,5 +1,5 @@
 {
-    "name": "nicoljamie/laravelCDN",
+    "name": "nicoljamie/transmit",
     "description": "CDN Help for Laravel",
     "authors": [
         {
@@ -15,10 +15,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "NicolJamie\\LaravelCDN\\LaravelCDNServiceProvider"
+                "NicolJamie\\transmit\\TransmitServiceProvider"
             ],
             "aliases": {
-                "Spaces": "NicolJamie\\LaravelCDN\\SpacesFacade"
+                "Transmit": "NicolJamie\\Transmit\\TransmitFacade"
             }
         }
     },
