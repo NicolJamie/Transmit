@@ -9,7 +9,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "NicolJamie\\LaravelCDN\\": "src/"
+            "NicolJamie\\Transmit\\": "src/"
         }
     },
     "extra": {

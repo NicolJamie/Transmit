@@ -25,7 +25,7 @@ class Library
     public function push($env = 'staging')
     {
         return $this->connection->directory([
-            'pathToDirectory' => '',
+            'pathToDirectory' => $this->compile(),
             'saveAs' => ''
         ], true);
     }
@@ -39,6 +39,8 @@ class Library
     {
         storage_path('');
 
+        //.. get all files from config in public.
+        //.. render into file
         //.. fetch assets to push and complile
     }
 }
