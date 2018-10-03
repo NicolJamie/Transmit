@@ -15,7 +15,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "NicolJamie\\transmit\\TransmitServiceProvider"
+                "NicolJamie\\Transmit\\TransmitServiceProvider"
             ],
             "aliases": {
                 "Transmit": "NicolJamie\\Transmit\\TransmitFacade"
