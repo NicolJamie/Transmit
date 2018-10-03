@@ -1,6 +1,6 @@
 <?php
 
-namespace NicolJamie\LaravelCDN;
+namespace NicolJamie\Transmit;
 
 use NicolJamie\Spaces\Space;
 

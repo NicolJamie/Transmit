@@ -1,10 +1,10 @@
 <?php
 
-namespace NicolJamie\LaravelCDN;
+namespace NicolJamie\Transmit;
 
 use Illuminate\Support\ServiceProvider;
 
-class LaravelCDNServiceProvider extends ServiceProvider
+class TransmitServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
