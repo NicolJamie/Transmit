@@ -13,6 +13,8 @@ class Library
     public function __construct()
     {
         $this->connection = Space::boot();
+
+        $this->config = env('');
     }
 
     /**
@@ -20,20 +22,23 @@ class Library
      * Complile assets from resources
      * @throws \Exception
      */
-    public function push()
+    public function push($env = 'staging')
     {
-        $this->connection->directory(
-            $this->compile(), true
-        );
+        return $this->connection->directory([
+            'pathToDirectory' => '',
+            'saveAs' => ''
+        ], true);
     }
-    
+
     public function purge()
     {
         //.. clear bucket
     }
-    
+
     private function compile()
     {
+        storage_path('');
+
         //.. fetch assets to push and complile
     }
 }
