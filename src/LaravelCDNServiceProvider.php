@@ -15,7 +15,7 @@ class LaravelCDNServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/../config/cdn.php' => config_path('cdn.php'),
-        ], 'spaces');
+        ], 'cdn');
     }
 
     /**
