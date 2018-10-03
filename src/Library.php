@@ -23,7 +23,7 @@ class Library
     public function push()
     {
         $this->connection->directory(
-            $this->complile(), true
+            $this->compile(), true
         );
     }
     
@@ -32,7 +32,7 @@ class Library
         //.. clear bucket
     }
     
-    private function complile()
+    private function compile()
     {
         //.. fetch assets to push and complile
     }
