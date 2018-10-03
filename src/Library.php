@@ -37,7 +37,19 @@ class Library
 
     private function compile()
     {
-        storage_path('');
+        $toCompile = [];
+
+        foreach ($this->config['directories'] as $directory) {
+            $path = public_path($directory);
+
+            if (is_dir($path)) {
+                $toCompile[] = $path;
+            }
+        }
+
+        if (!empty($toCompile)) {
+            throw new \Exception('No directories to compile');
+        }
 
         //.. get all files from config in public.
         //.. render into file
