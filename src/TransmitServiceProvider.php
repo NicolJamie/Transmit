@@ -2,6 +2,7 @@
 
 namespace NicolJamie\Transmit;
 
+use App\Console\Commands\Deploy;
 use Illuminate\Support\ServiceProvider;
 
 class TransmitServiceProvider extends ServiceProvider
@@ -16,6 +17,12 @@ class TransmitServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/transmit.php' => config_path('transmit.php'),
         ], 'transmit');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Deploy::class
+            ]);
+        }
     }
 
     /**
