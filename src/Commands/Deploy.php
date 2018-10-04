@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace NicolJamie\Transmit\Commands;
 
 use Illuminate\Console\Command;
 use NicolJamie\Transmit\Library;
