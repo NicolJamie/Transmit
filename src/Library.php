@@ -2,6 +2,8 @@
 
 namespace NicolJamie\Transmit;
 
+use League\Flysystem\File;
+use League\Flysystem\Filesystem;
 use NicolJamie\Spaces\Space;
 
 class Library
@@ -15,6 +17,8 @@ class Library
         $this->connection = Space::boot();
 
         $this->config = env('');
+
+        $this->fileSystem = new \Illuminate\Filesystem\Filesystem;
     }
 
     /**
@@ -24,17 +28,33 @@ class Library
      */
     public function push($env = 'staging')
     {
-        return $this->connection->directory([
-            'pathToDirectory' => $this->compile(),
-            'saveAs' => ''
-        ], true);
+        try {
+            $this->connection->directory([
+                'pathToDirectory' => $this->compile(),
+                'saveAs' => ''
+            ], true);
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
+        $this->purge();
     }
 
+    /**
+     * purge
+     * @return bool
+     */
     public function purge()
     {
-        //.. clear bucket
+        return $this->fileSystem->deleteDirectory(storage_path('upload'));
     }
 
+    /**
+     * compile
+     * Compiles uploads into one folder
+     * @return string
+     * @throws \Exception
+     */
     private function compile()
     {
         $toCompile = [];
@@ -51,8 +71,14 @@ class Library
             throw new \Exception('No directories to compile');
         }
 
-        //.. get all files from config in public.
-        //.. render into file
-        //.. fetch assets to push and complile
+        if (mkdir(public_path('upload'), 0777) === false) {
+            throw new \Exception('Upload directory could not be created');
+        }
+
+        foreach ($toCompile as $value) {
+            $this->fileSystem->copyDirectory(storage_path($value), storage_path('upload'));
+        }
+
+        return storage_path('upload');
     }
 }
