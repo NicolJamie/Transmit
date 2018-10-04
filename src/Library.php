@@ -3,8 +3,8 @@
 namespace NicolJamie\Transmit;
 
 use League\Flysystem\File;
-use League\Flysystem\Filesystem;
 use NicolJamie\Spaces\Space;
+use League\Flysystem\Filesystem;
 
 class Library
 {
@@ -16,7 +16,7 @@ class Library
     {
         $this->connection = Space::boot();
 
-        $this->config = env('');
+        $this->config = config('cdn');
 
         $this->fileSystem = new \Illuminate\Filesystem\Filesystem;
     }
@@ -28,10 +28,12 @@ class Library
      */
     public function push($env = 'staging')
     {
+        $this->compile();
+
         try {
             $this->connection->directory([
                 'pathToDirectory' => $this->compile(),
-                'saveAs' => ''
+                'saveAs'          => $env
             ], true);
         } catch (\Exception $exception) {
             return $exception->getMessage();
@@ -46,7 +48,9 @@ class Library
      */
     public function purge()
     {
-        return $this->fileSystem->deleteDirectory(storage_path('upload'));
+        if (is_dir(public_path('upload'))) {
+            return $this->fileSystem->deleteDirectory(public_path('upload'));
+        }
     }
 
     /**
@@ -59,7 +63,7 @@ class Library
     {
         $toCompile = [];
 
-        foreach ($this->config['directories'] as $directory) {
+        foreach ($this->config['directories'] as $key => $directory) {
             $path = public_path($directory);
 
             if (is_dir($path)) {
@@ -67,16 +71,18 @@ class Library
             }
         }
 
-        if (!empty($toCompile)) {
+        if (empty($toCompile)) {
             throw new \Exception('No directories to compile');
         }
+
+        $this->purge();
 
         if (mkdir(public_path('upload'), 0777) === false) {
             throw new \Exception('Upload directory could not be created');
         }
 
-        foreach ($toCompile as $value) {
-            $this->fileSystem->copyDirectory(storage_path($value), storage_path('upload'));
+        foreach ($toCompile as $key => $value) {
+            $this->fileSystem->copyDirectory($value, public_path('upload'));
         }
 
         return storage_path('upload');

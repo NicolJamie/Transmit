@@ -2,7 +2,9 @@
 
 return [
     'directories' => [
+        'js',
+        'css',
+        'image'
         //.. directories to push
     ],
-    'prefix' => '' //..uploading to a folder (staging, production)
 ];
