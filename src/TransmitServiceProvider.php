@@ -2,7 +2,7 @@
 
 namespace NicolJamie\Transmit;
 
-use App\Console\Commands\Deploy;
+use NicolJamie\Transmit\Commands;
 use Illuminate\Support\ServiceProvider;
 
 class TransmitServiceProvider extends ServiceProvider
@@ -20,7 +20,7 @@ class TransmitServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Deploy::class
+                Commands\Deploy::class
             ]);
         }
     }
