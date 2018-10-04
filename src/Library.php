@@ -34,7 +34,7 @@ class Library
         try {
             $this->connection->directory([
                 'directory' => $this->compile(),
-                'saveAs'          => $env
+                'prefix' => $env
             ], true);
         } catch (\Exception $exception) {
             return $exception->getMessage();
