@@ -16,7 +16,7 @@ class Library
     {
         $this->connection = Space::boot();
 
-        $this->config = config('cdn');
+        $this->config = config('transmit');
 
         $this->fileSystem = new \Illuminate\Filesystem\Filesystem;
     }
@@ -40,6 +40,8 @@ class Library
         }
 
         $this->purge();
+
+        return true;
     }
 
     /**
