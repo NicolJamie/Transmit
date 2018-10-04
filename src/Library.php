@@ -33,7 +33,7 @@ class Library
     {
         try {
             $this->connection->directory([
-                'pathToDirectory' => $this->compile(),
+                'directory' => $this->compile(),
                 'saveAs'          => $env
             ], true);
         } catch (\Exception $exception) {
