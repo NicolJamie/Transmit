@@ -2,7 +2,9 @@
 
 namespace NicolJamie\Transmit;
 
+use League\Flysystem\File;
 use NicolJamie\Spaces\Space;
+use League\Flysystem\Filesystem;
 
 class Library
 {
@@ -14,7 +16,9 @@ class Library
     {
         $this->connection = Space::boot();
 
-        $this->config = env('');
+        $this->config = config('transmit');
+
+        $this->fileSystem = new \Illuminate\Filesystem\Filesystem;
     }
 
     /**
@@ -24,21 +28,65 @@ class Library
      */
     public function push($env = 'staging')
     {
-        return $this->connection->directory([
-            'pathToDirectory' => '',
-            'saveAs' => ''
-        ], true);
+        $this->compile();
+
+        try {
+            $this->connection->directory([
+                'pathToDirectory' => $this->compile(),
+                'saveAs'          => $env
+            ], true);
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
+        $this->purge();
+
+        return true;
     }
 
+    /**
+     * purge
+     * @return bool
+     */
     public function purge()
     {
-        //.. clear bucket
+        if (is_dir(public_path('upload'))) {
+            return $this->fileSystem->deleteDirectory(public_path('upload'));
+        }
     }
 
+    /**
+     * compile
+     * Compiles uploads into one folder
+     * @return string
+     * @throws \Exception
+     */
     private function compile()
     {
-        storage_path('');
+        $toCompile = [];
 
-        //.. fetch assets to push and complile
+        foreach ($this->config['directories'] as $key => $directory) {
+            $path = public_path($directory);
+
+            if (is_dir($path)) {
+                $toCompile[] = $path;
+            }
+        }
+
+        if (empty($toCompile)) {
+            throw new \Exception('No directories to compile');
+        }
+
+        $this->purge();
+
+        if (mkdir(public_path('upload'), 0777) === false) {
+            throw new \Exception('Upload directory could not be created');
+        }
+
+        foreach ($toCompile as $key => $value) {
+            $this->fileSystem->copyDirectory($value, public_path('upload'));
+        }
+
+        return storage_path('upload');
     }
 }
