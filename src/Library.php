@@ -24,12 +24,13 @@ class Library
     /**
      * push
      * Complile assets from resources
-     * @throws \Exception
+     *
+     * @param string $env
+     *
+     * @return bool|string
      */
     public function push($env = 'staging')
     {
-        $this->compile();
-
         try {
             $this->connection->directory([
                 'pathToDirectory' => $this->compile(),
