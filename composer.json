@@ -12,6 +12,9 @@
             "NicolJamie\\Transmit\\": "src/"
         }
     },
+    "files": [
+        "vendor/nicoljamie/transmit/transmit-helper.php"
+    ],
     "extra": {
         "laravel": {
             "providers": [
