@@ -46,13 +46,50 @@ class Library
     }
 
     /**
+     * fetch
+     *
+     * @param string $env
+     *
+     * @return bool|string
+     */
+    public function fetch($env = 'staging')
+    {
+        $this->directory();
+
+        try {
+            $this->connection->directory([
+                'directory' => $this->compile(),
+                'prefix' => $env
+            ], false);
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
+        $this->purge();
+
+        return true;
+    }
+
+    /**
      * purge
      * @return bool
      */
     public function purge()
     {
-        if (is_dir(public_path('upload'))) {
-            return $this->fileSystem->deleteDirectory(public_path('upload'));
+        if (is_dir(public_path('compile'))) {
+            return $this->fileSystem->deleteDirectory(public_path('compile'));
+        }
+    }
+
+    /**
+     * directory
+     * Creates the directory
+     * @throws \Exception
+     */
+    public function directory()
+    {
+        if (mkdir(public_path('compile'), 0777) === false) {
+            throw new \Exception('Upload directory could not be created');
         }
     }
 
@@ -79,15 +116,20 @@ class Library
         }
 
         $this->purge();
-
-        if (mkdir(public_path('upload'), 0777) === false) {
-            throw new \Exception('Upload directory could not be created');
-        }
+        $this->directory();
 
         foreach ($toCompile as $key => $value) {
-            $this->fileSystem->copyDirectory($value, public_path('upload'));
+            $explode = explode('/', $value);
+            $end = end($explode);
+
+            $this->fileSystem->copyDirectory($value , public_path('compile') . '/' . $end);
         }
 
-        return storage_path('upload');
+        return public_path('compile');
+    }
+
+    private function unpack()
+    {
+
     }
 }
