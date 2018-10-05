@@ -3,6 +3,7 @@
 namespace NicolJamie\Transmit\Commands;
 
 use Illuminate\Console\Command;
+use NicolJamie\Transmit\Help;
 use NicolJamie\Transmit\Library;
 
 class Transmit extends Command
