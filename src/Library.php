@@ -54,17 +54,18 @@ class Library
      */
     public function fetch($env = 'staging')
     {
-        $this->directory();
+        $directory = $this->directory();
 
         try {
             $this->connection->directory([
-                'directory' => $this->compile(),
+                'directory' => $directory,
                 'prefix' => $env
             ], false);
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
 
+        $this->unpack();
         $this->purge();
 
         return true;
@@ -91,6 +92,8 @@ class Library
         if (mkdir(public_path('compile'), 0777) === false) {
             throw new \Exception('Upload directory could not be created');
         }
+
+        return public_path('compile');
     }
 
     /**
@@ -116,7 +119,7 @@ class Library
         }
 
         $this->purge();
-        $this->directory();
+        $directory = $this->directory();
 
         foreach ($toCompile as $key => $value) {
             $explode = explode('/', $value);
@@ -125,11 +128,22 @@ class Library
             $this->fileSystem->copyDirectory($value , public_path('compile') . '/' . $end);
         }
 
-        return public_path('compile');
+        return $directory;
     }
 
+    /**
+     * unpack
+     * @return bool
+     */
     private function unpack()
     {
+        foreach ($this->config['directories'] as $key => $value) {
+            $explode = explode('/', $value);
+            $end = end($explode);
 
+            $this->fileSystem->copyDirectory(public_path('compile/' . $end) , public_path('/' . $end));
+        }
+
+        return true;
     }
 }
