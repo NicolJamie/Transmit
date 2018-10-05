@@ -3,16 +3,17 @@
 namespace NicolJamie\Transmit\Commands;
 
 use Illuminate\Console\Command;
+use NicolJamie\Transmit\Help;
 use NicolJamie\Transmit\Library;
 
-class Deploy extends Command
+class Transmit extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'deploy:staging';
+    protected $signature = 'transmit {type}';
 
     /**
      * The console command description.
@@ -33,14 +34,20 @@ class Deploy extends Command
 
     public function handle(Library $library)
     {
-        $this->comment('Deploying assets to staging');
+        if ($this->hasArgument('type') === false) {
+            throw new \Exception('Please provide either \'push\' or \'fetch\'');
+        }
+
+        $type = $this->argument('type');
+
+        $this->comment('Working...');
 
         try {
-            $library->push('staging');
+            $library->$type('staging', true);
         } catch (\Exception $exception) {
             $this->comment($exception->getMessage());
         }
 
-        $this->comment('Finished deploying to staging');
+        $this->comment('Finished!');
     }
 }

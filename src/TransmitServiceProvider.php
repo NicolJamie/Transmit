@@ -20,7 +20,7 @@ class TransmitServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Commands\Deploy::class
+                Commands\Transmit::class
             ]);
         }
     }

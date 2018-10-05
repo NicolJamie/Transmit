@@ -46,14 +46,83 @@ class Library
     }
 
     /**
+     * fetch
+     * @param string $env
+     * @param bool $unpack
+     *
+     * @return bool|string
+     * @throws \Exception
+     */
+    public function fetch($env = 'staging', $unpack = true)
+    {
+        $directory = $this->directory();
+
+        try {
+            $this->connection->directory([
+                'directory' => $directory,
+                'prefix' => $env
+            ], false);
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
+        $unpack === false ?: $this->unpack();
+        $this->purge();
+
+        return true;
+    }
+
+    /**
+     * deploy
+     * Push assets from staging to production
+     * @return bool|string
+     * @throws \Exception
+     */
+    public function deploy()
+    {
+        // First purge the folder is it is there
+        $this->purge();
+        
+        // Create the directory and download assets
+        $this->fetch('staging', false);
+
+        try {
+            $this->connection->directory([
+                'directory' => $this->compile(),
+                'prefix' => 'production'
+            ], true);
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
+        $this->purge();
+
+        return true;
+    }
+
+    /**
      * purge
      * @return bool
      */
     public function purge()
     {
-        if (is_dir(public_path('upload'))) {
-            return $this->fileSystem->deleteDirectory(public_path('upload'));
+        if (is_dir(public_path('compile'))) {
+            return $this->fileSystem->deleteDirectory(public_path('compile'));
         }
+    }
+
+    /**
+     * directory
+     * Creates the directory
+     * @throws \Exception
+     */
+    public function directory()
+    {
+        if (mkdir(public_path('compile'), 0777) === false) {
+            throw new \Exception('Upload directory could not be created');
+        }
+
+        return public_path('compile');
     }
 
     /**
@@ -79,15 +148,31 @@ class Library
         }
 
         $this->purge();
-
-        if (mkdir(public_path('upload'), 0777) === false) {
-            throw new \Exception('Upload directory could not be created');
-        }
+        $directory = $this->directory();
 
         foreach ($toCompile as $key => $value) {
-            $this->fileSystem->copyDirectory($value, public_path('upload'));
+            $explode = explode('/', $value);
+            $end = end($explode);
+
+            $this->fileSystem->copyDirectory($value , public_path('compile') . '/' . $end);
         }
 
-        return storage_path('upload');
+        return $directory;
+    }
+
+    /**
+     * unpack
+     * @return bool
+     */
+    private function unpack()
+    {
+        foreach ($this->config['directories'] as $key => $value) {
+            $explode = explode('/', $value);
+            $end = end($explode);
+
+            $this->fileSystem->copyDirectory(public_path('compile/' . $end) , public_path('/' . $end));
+        }
+
+        return true;
     }
 }
