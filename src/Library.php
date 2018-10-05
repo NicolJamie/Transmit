@@ -47,12 +47,13 @@ class Library
 
     /**
      * fetch
-     *
      * @param string $env
+     * @param bool $unpack
      *
      * @return bool|string
+     * @throws \Exception
      */
-    public function fetch($env = 'staging')
+    public function fetch($env = 'staging', $unpack = true)
     {
         $directory = $this->directory();
 
@@ -65,7 +66,35 @@ class Library
             return $exception->getMessage();
         }
 
-        $this->unpack();
+        $unpack === false ?: $this->unpack();
+        $this->purge();
+
+        return true;
+    }
+
+    /**
+     * deploy
+     * Push assets from staging to production
+     * @return bool|string
+     * @throws \Exception
+     */
+    public function deploy()
+    {
+        // First purge the folder is it is there
+        $this->purge();
+        
+        // Create the directory and download assets
+        $this->fetch('staging', false);
+
+        try {
+            $this->connection->directory([
+                'directory' => $this->compile(),
+                'prefix' => 'production'
+            ], true);
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
         $this->purge();
 
         return true;

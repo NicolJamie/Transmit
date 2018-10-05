@@ -40,10 +40,10 @@ class Transmit extends Command
 
         $type = $this->argument('type');
 
-        $this->comment( 'Working...');
+        $this->comment('Working...');
 
         try {
-            $library->$type('staging');
+            $library->$type('staging', true);
         } catch (\Exception $exception) {
             $this->comment($exception->getMessage());
         }
