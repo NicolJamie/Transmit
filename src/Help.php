@@ -15,7 +15,7 @@ class Help
     public static function path($path)
     {
         if (env('APP_ENV') === 'local') {
-            return url()->asset($path);
+            return url()->asset($path) . '?v=' . uniqid('', true);
         }
 
         $space = \NicolJamie\Spaces\Space::boot();
