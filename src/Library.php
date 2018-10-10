@@ -6,7 +6,7 @@ use League\Flysystem\File;
 use NicolJamie\Spaces\Space;
 use League\Flysystem\Filesystem;
 
-class Library
+class Library extends Compression
 {
     /**
      * Boot constructor.
@@ -85,10 +85,13 @@ class Library
         $this->purge('compile_production');
         
         // .. fetch staging assets into 'compile'
-        $this->fetch('staging', false);
+        $this->fetch('staging', true);
 
         // .. compile into production folder
         $this->compile('compile_production');
+
+        // .. compress JS
+        $this->js();
 
 //        try {
 //            $this->connection->directory([
@@ -99,7 +102,7 @@ class Library
 //            return $exception->getMessage();
 //        }
 
-        //.. purge 'compile' and 'compile_production'
+        // ..purge 'compile' and 'compile_production'
         $this->purge();
         $this->purge('compile_production');
 

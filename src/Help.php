@@ -30,14 +30,14 @@ class Help
      */
     public static function js()
     {
+        $mainJs = self::mainJs();
         $js = config('transmit.jsMinify');
-        $index = array_keys($js);
 
         if (in_array(env('APP_ENV'), ['local', 'staging'])) {
-            self::jsPath($index[0], $js[$index[0]]);
+            self::jsPath($mainJs[0], $js[$mainJs[0]]);
         }
 
-        self::jsPath($index[0]);
+        self::jsPath($mainJs[0]);
     }
 
     /**
@@ -83,6 +83,18 @@ class Help
     public static function cssPath($path)
     {
         return self::path('css/' . $path);
+    }
+
+    /**
+     * mainJs
+     * @return array
+     */
+    public static function mainJs()
+    {
+        $js = config('transmit.jsMinify');
+        $index = array_keys($js);
+
+        return $index;
     }
 
     /**
