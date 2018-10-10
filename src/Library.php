@@ -80,49 +80,60 @@ class Library
      */
     public function deploy()
     {
-        // First purge the folder is it is there
+        //.. purge 'compile' and 'compile_production'
         $this->purge();
+        $this->purge('compile_production');
         
-        // Create the directory and download assets
+        // .. fetch staging assets into 'compile'
         $this->fetch('staging', false);
 
-        try {
-            $this->connection->directory([
-                'directory' => $this->compile(),
-                'prefix' => 'production'
-            ], true);
-        } catch (\Exception $exception) {
-            return $exception->getMessage();
-        }
+        // .. compile into production folder
+        $this->compile('compile_production');
 
+//        try {
+//            $this->connection->directory([
+//                'directory' => $this->compile(),
+//                'prefix' => 'production'
+//            ], true);
+//        } catch (\Exception $exception) {
+//            return $exception->getMessage();
+//        }
+
+        //.. purge 'compile' and 'compile_production'
         $this->purge();
+        $this->purge('compile_production');
 
         return true;
     }
 
     /**
      * purge
+     * @param null $folder
+     *
      * @return bool
      */
-    public function purge()
+    public function purge($folder = null)
     {
-        if (is_dir(public_path('compile'))) {
-            return $this->fileSystem->deleteDirectory(public_path('compile'));
+        if (is_dir(public_path(is_null($folder) ? 'compile' : $folder))) {
+            return $this->fileSystem->deleteDirectory(public_path(is_null($folder) ? 'compile' : $folder));
         }
     }
 
     /**
      * directory
-     * Creates the directory
+     * Created the directory
+     * @param null $folder
+     *
+     * @return string
      * @throws \Exception
      */
-    public function directory()
+    public function directory($folder = null)
     {
-        if (mkdir(public_path('compile'), 0777) === false) {
+        if (mkdir(public_path(is_null($folder) ? 'compile' : $folder), 0777) === false) {
             throw new \Exception('Upload directory could not be created');
         }
 
-        return public_path('compile');
+        return public_path(is_null($folder) ? 'compile' : $folder);
     }
 
     /**
@@ -131,7 +142,7 @@ class Library
      * @return string
      * @throws \Exception
      */
-    private function compile()
+    private function compile($folder = null)
     {
         $toCompile = [];
 
@@ -154,7 +165,7 @@ class Library
             $explode = explode('/', $value);
             $end = end($explode);
 
-            $this->fileSystem->copyDirectory($value , public_path('compile') . '/' . $end);
+            $this->fileSystem->copyDirectory($value , public_path(is_null($folder) ? 'compile' : $folder) . '/' . $end);
         }
 
         return $directory;
