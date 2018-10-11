@@ -32,7 +32,7 @@ class Transmit extends Command
         parent::__construct();
     }
 
-    public function handle(Library $library)
+    public function handle(\NicolJamie\Transmit\Transmit $transmit)
     {
         if ($this->hasArgument('type') === false) {
             throw new \Exception('Please provide either \'push\' or \'fetch\'');
@@ -43,7 +43,7 @@ class Transmit extends Command
         $this->comment('Working...');
 
         try {
-            $library->$type('staging', true);
+            $transmit->$type('staging', true);
         } catch (\Exception $exception) {
             $this->comment($exception->getMessage());
         }

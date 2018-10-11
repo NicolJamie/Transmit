@@ -15,7 +15,7 @@ class Help
     public static function path($path)
     {
         if (env('APP_ENV') === 'local') {
-            return url()->asset($path) . '?v=' . uniqid('');
+            return url()->asset($path) . '?v=' . uniqid();
         }
 
         $space = \NicolJamie\Spaces\Space::boot();
@@ -30,7 +30,7 @@ class Help
      */
     public static function js()
     {
-        $mainJs = self::mainJs();
+        $mainJs = Library::mainJs();
         $js = config('transmit.jsMinify');
 
         if (in_array(env('APP_ENV'), ['local', 'staging'])) {
@@ -53,8 +53,10 @@ class Help
         if (in_array(env('APP_ENV'), ['local', 'staging'])) {
             echo self::renderJs(self::path('js/' . $path));
 
-            foreach ($includes as $include) {
-                echo self::renderJs(self::path('js/' . $include));
+            if (!empty($includes)) {
+                foreach ($includes as $include) {
+                    echo self::renderJs(self::path('js/' . $include));
+                }
             }
         }
 
@@ -83,18 +85,6 @@ class Help
     public static function cssPath($path)
     {
         return self::path('css/' . $path);
-    }
-
-    /**
-     * mainJs
-     * @return array
-     */
-    public static function mainJs()
-    {
-        $js = config('transmit.jsMinify');
-        $index = array_keys($js);
-
-        return $index;
     }
 
     /**
