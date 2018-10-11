@@ -22,7 +22,7 @@ class Compression
      */
     public function js()
     {
-        $main = Help::mainJs();
+        $main = Library::mainJs();
         $includes = config('transmit.jsMinify')[$main[0]];
         $jsPath = public_path('compile_production/js/');
 
@@ -58,6 +58,6 @@ class Compression
      */
     private function put($to, $from)
     {
-        fwrite($to, file_get_contents($from));
+        fwrite($to, preg_replace('!/\*.*?\*/!s', '', file_get_contents($from)));
     }
 }
