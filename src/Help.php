@@ -62,7 +62,7 @@ class Help
         }
 
         //.. on production load in minfied file
-        return self::path('js/' . $path);
+        echo self::renderJs(self::path('js/' . $path));
     }
 
     /**
