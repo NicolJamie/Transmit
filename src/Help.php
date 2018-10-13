@@ -15,7 +15,7 @@ class Help
     public static function path($path)
     {
         if (env('APP_ENV') === 'local') {
-            return url()->asset($path);
+            return url()->asset($path) . '?v=' . uniqid();
         }
 
         $space = \NicolJamie\Spaces\Space::boot();
@@ -24,14 +24,45 @@ class Help
     }
 
     /**
+     * js
+     * Renders JS onto page
+     * @throws \Exception
+     */
+    public static function js()
+    {
+        $mainJs = Library::mainJs();
+        $js = config('transmit.jsMinify');
+
+        if (in_array(env('APP_ENV'), ['local', 'staging'])) {
+            self::jsPath($mainJs[0], $js[$mainJs[0]]);
+        }
+
+        self::jsPath($mainJs[0]);
+    }
+
+    /**
      * jsPath
      * @param $path
+     * @param array $include
      *
-     * @return mixed
+     * @return string
+     * @throws \Exception
      */
-    public static function jsPath($path)
+    public static function jsPath($path, $includes = [])
     {
-        return self::path('js/' . $path);
+        //.. if local or staging render all files
+        if (in_array(env('APP_ENV'), ['local', 'staging'])) {
+            echo self::renderJs(self::path('js/' . $path));
+
+            if (!empty($includes)) {
+                foreach ($includes as $include) {
+                    echo self::renderJs(self::path('js/' . $include));
+                }
+            }
+        }
+
+        //.. on production load in minfied file
+        echo self::renderJs(self::path('js/' . $path));
     }
 
     /**
@@ -56,5 +87,16 @@ class Help
     public static function cssPath($path)
     {
         return self::path('css/' . $path);
+    }
+
+    /**
+     * renderJs
+     * @param string $path
+     *
+     * @return string
+     */
+    private static function renderJs($path = '')
+    {
+        return "<script src='{$path}'></script>";
     }
 }
