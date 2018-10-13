@@ -4,103 +4,89 @@ namespace NicolJamie\Transmit;
 
 use NicolJamie\Spaces\Space;
 
-class Transmit extends Compression
+class Transmit extends Library
 {
-    /**
-     * Transmit constructor.
-     */
     public function __construct()
     {
+        parent::__construct();
+
         $this->connection = Space::boot();
 
-        $this->library = new Library();
+        $this->purge();
     }
 
     /**
      * push
-     * Complile assets from resources
      *
      * @param string $env
      *
-     * @return bool|string
+     * @return bool|\Exception
      */
-    public function push($env = 'staging')
+    public function push($env = 'staging', $directory = null)
     {
         try {
-            $this->connection->directory([
-                'directory' => $this->library->compile(),
+            //.. compile and and upload directory
+            return $this->connection->directory([
+                'directory' => is_null($directory) ? $this->compile() : $directory,
                 'prefix' => $env
-            ], true);
+            ]);
         } catch (\Exception $exception) {
-            return $exception->getMessage();
+            return $exception;
         }
-
-        $this->library->purge();
-
-        return true;
     }
 
     /**
      * fetch
-     * @param string $env
-     * @param bool $unpack
      *
-     * @return bool|string
-     * @throws \Exception
+     * @param string $env
+     *
+     * @return bool|\Exception
      */
-    public function fetch($env = 'staging', $unpack = true)
+    public function fetch($env = 'staging')
     {
-        $directory = $this->library->directory();
-
         try {
-            $this->connection->directory([
-                'directory' => $directory,
-                'prefix' => $env
-            ], false);
+            //.. download directory
+            $download = $this->connection->directory([
+                'directory' => $this->directory(),
+                'prefix' => $env,
+            ]);
         } catch (\Exception $exception) {
-            return $exception->getMessage();
+            return $exception;
         }
 
-        $unpack === false ?: $this->library->unpack();
-        $this->library->purge();
+        //.. unpack the compiled directory
+        $this->unpack();
 
-        return true;
+        return $download;
     }
 
     /**
      * deploy
-     * Push assets from staging to production
-     * @return bool|string
+     *
+     * @return bool
      * @throws \Exception
      */
     public function deploy()
     {
-        //.. purge 'compile' and 'compile_production'
-        $this->library->purge();
-        $this->library->purge('compile_production');
+        //.. get staging files
+        $this->fetch();
+        //.. compile everything for production
+        $directory = $this->compile('compile_production');
 
-        // .. fetch staging assets into 'compile'
-        $this->fetch('staging', true);
+        //.. compress js code
+        $this->minifyJs();
 
-        // .. compile into production folder
-        $this->library->compile('compile_production');
+        //.. push assets to production
+        $this->push('production', $directory);
 
-        // .. compress JS
-        $this->js();
-
-        //        try {
-        //            $this->connection->directory([
-        //                'directory' => $this->compile(),
-        //                'prefix' => 'production'
-        //            ], true);
-        //        } catch (\Exception $exception) {
-        //            return $exception->getMessage();
-        //        }
-
-        // ..purge 'compile' and 'compile_production'
-        $this->library->purge();
-        $this->library->purge('compile_production');
+        //.. purge compile
+        $this->purge('compile_production');
 
         return true;
+    }
+
+    public function __destruct()
+    {
+        $this->purge();
     }
 }

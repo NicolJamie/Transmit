@@ -50,6 +50,7 @@ class Help
      */
     public static function jsPath($path, $includes = [])
     {
+        //.. if local or staging render all files
         if (in_array(env('APP_ENV'), ['local', 'staging'])) {
             echo self::renderJs(self::path('js/' . $path));
 
@@ -60,6 +61,7 @@ class Help
             }
         }
 
+        //.. on production load in minfied file
         return self::path('js/' . $path);
     }
 
