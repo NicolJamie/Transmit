@@ -52,13 +52,15 @@ class Help
     {
         //.. if local or staging render all files
         if (in_array(env('APP_ENV'), ['local', 'staging'])) {
-            echo self::renderJs(self::path('js/' . $path));
+            echo self::path('js/' . $path);
 
             if (!empty($includes)) {
                 foreach ($includes as $include) {
                     echo self::renderJs(self::path('js/' . $include));
                 }
             }
+
+            return true;
         }
 
         //.. on production load in minfied file
