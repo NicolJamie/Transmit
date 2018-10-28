@@ -103,7 +103,13 @@ class Library
     public function minifyJs()
     {
         $mainJs  = self::mainJs();
-        $jsFiles = $this->config['jsMinify'][$mainJs[0]];
+
+        //.. check index 0
+        if (!isset($mainJs[0])) {
+            $this->purge('compile_production');
+            throw new \Exception('Nothing to minify, check your config.');
+        }
+        
         $compile = public_path('compile_production/');
 
         $compileTmp = $compile . 'js/' . str_replace('.js', '', $mainJs[0]) . '_tmp.js';
