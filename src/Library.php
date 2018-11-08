@@ -109,7 +109,7 @@ class Library
             $this->purge('compile_production');
             throw new \Exception('Nothing to minify, check your config.');
         }
-        
+
         $compile = public_path('compile_production/');
 
         $compileTmp = $compile . 'js/' . str_replace('.js', '', $mainJs[0]) . '_tmp.js';
