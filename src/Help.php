@@ -59,6 +59,8 @@ class Help
                     echo self::renderJs(self::path('js/' . $include));
                 }
             }
+
+            return true;
         }
 
         //.. on production load in minfied file

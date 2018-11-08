@@ -43,7 +43,7 @@ class Transmit extends Command
         $this->comment('Working...');
 
         try {
-            $transmit->$type('staging', true);
+            $transmit->$type();
         } catch (\Exception $exception) {
             $this->comment($exception->getMessage());
         }
