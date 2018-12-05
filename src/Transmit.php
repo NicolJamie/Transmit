@@ -49,7 +49,7 @@ class Transmit extends Library
             $download = $this->connection->directory([
                 'directory' => $this->directory(),
                 'prefix' => $env,
-            ]);
+            ], false);
         } catch (\Exception $exception) {
             return $exception;
         }
