@@ -103,6 +103,7 @@ class Library
     public function minifyJs()
     {
         $mainJs  = self::mainJs();
+        $jsFiles = $this->config['jsMinify'][$mainJs[0]];
 
         //.. check index 0
         if (!isset($mainJs[0])) {
